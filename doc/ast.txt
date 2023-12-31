@@ -1,0 +1,64 @@
+# Grammar for C AST
+program
+	= ( item )*;
+
+item
+	= fn-defn;
+
+fn-defn
+	= typed-ident "(" param-list ")" "{" fn-body "}";
+
+param-list
+	= "void"
+	| ( typed-ident "," )* typed-ident;
+
+fn-body
+	= ( stmt )*;
+
+stmt
+	= decl-stmt
+	| expr-stmt;
+
+decl-stmt
+	= typed-ident ";"
+	| typed-ident "=" expr ";";
+
+expr-stmt
+	= expr ";";
+
+expr
+	= ident-expr
+	| paren-expr
+	| bin-op-expr
+	| assn-expr;
+
+ident-expr
+	= ident;
+
+paren-expr
+	= "(" expr ")";
+
+bin-op-expr
+	= expr bin-op expr;
+
+bin-op
+	= "+" | "-" | "*" | "/";
+
+assn-expr
+	= expr "=" expr;
+
+typed-ident
+	= type-prefix ident
+	| type-prefix "*" ident;
+
+type-prefix
+	= "int"
+	| "char"
+	| "struct" ident;
+
+# Tokens
+ident
+	= "";
+
+lit
+	= "";
