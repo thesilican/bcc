@@ -1,0 +1,11 @@
+{
+  "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, UseTab: Always, TabWidth: 4, IndentWidth: 4, AllowShortBlocksOnASingleLine: Never, AllowShortFunctionsOnASingleLine: None }",
+  "files.associations": {
+    "*.s": "arm",
+    "stdint.h": "c",
+    "stdio.h": "c",
+    "string.h": "c",
+    "cdefs.h": "c",
+    "availability.h": "c"
+  }
+}
