@@ -2,16 +2,29 @@
 from difflib import unified_diff
 from pathlib import Path
 from subprocess import run
+from sys import stdout
 
 ROOT = Path(__file__).joinpath("../..").resolve()
+IS_TTY = stdout.isatty()
+RESET = "\033[0;0m" if IS_TTY else ""
+RED = "\033[0;31m" if IS_TTY else ""
+GREEN = "\033[0;32m" if IS_TTY else ""
+CYAN = "\033[0;36m" if IS_TTY else ""
 
 
 def print_diff(output, expected):
     out_lines = [x + "\n" for x in output.splitlines()]
     expected_lines = [x + "\n" for x in expected.splitlines()]
     diff = unified_diff(out_lines, expected_lines, fromfile="output", tofile="expected")
-    diff_str = "".join(diff)
-    print(diff_str)
+    for line in diff:
+        if line.startswith("+"):
+            print(f"{GREEN}{line}{RESET}", end="")
+        elif line.startswith("-"):
+            print(f"{RED}{line}{RESET}", end="")
+        elif line.startswith("@"):
+            print(f"{CYAN}{line}{RESET}", end="")
+        else:
+            print(line, end="")
 
 
 def run_bcc(args):
@@ -35,9 +48,6 @@ def run_tests():
             with open(outfile) as f:
                 expect = f.read()
             output = run_bcc(["test", test_type, str(infile)])
-            RESET = "\033[0;0m"
-            RED = "\033[1;31m"
-            GREEN = "\033[0;32m"
             if output == expect:
                 print(f"[{GREEN}PASS{RESET}] {test_type}/{filename}")
             else:

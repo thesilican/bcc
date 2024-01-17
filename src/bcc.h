@@ -31,7 +31,8 @@ struct String {
 };
 
 /**
- * A borrowed string slice.
+ * A borrowed string slice. Must have a shorter lifetime than the
+ * underlying string that it is pointing to.
  */
 struct Str {
 	char *ptr;
@@ -96,29 +97,98 @@ enum LitType {
 	LIT_STR
 };
 
+// See https://en.cppreference.com/w/c/language/punctuators
 enum PunctType {
-	/** ( */
-	PUNCT_LPAREN,
-	/** ) */
-	PUNCT_RPAREN,
-	/** [ */
-	PUNCT_LBRACKET,
-	/** ] */
-	PUNCT_RBRACKET,
 	/** { */
 	PUNCT_LBRACE,
 	/** } */
 	PUNCT_RBRACE,
+	/** [ */
+	PUNCT_LBRACKET,
+	/** ] */
+	PUNCT_RBRACKET,
+	/** ( */
+	PUNCT_LPAREN,
+	/** ) */
+	PUNCT_RPAREN,
 	/** ; */
 	PUNCT_SEMI,
-	/** , */
-	PUNCT_COMMA,
-	/** . */
-	PUNCT_DOT,
 	/** : */
 	PUNCT_COLON,
+	/** ? */
+	PUNCT_QUESTION,
+	/** . */
+	PUNCT_DOT,
+	/** -> */
+	PUNCT_ARROW,
+	/** ~ */
+	PUNCT_TILDE,
+	/** ! */
+	PUNCT_EXCLAM,
+	/** + */
+	PUNCT_PLUS,
+	/** - */
+	PUNCT_DASH,
 	/** * */
 	PUNCT_STAR,
+	/** / */
+	PUNCT_SLASH,
+	/** % */
+	PUNCT_PERCENT,
+	/** ^ */
+	PUNCT_HAT,
+	/** & */
+	PUNCT_AMP,
+	/** | */
+	PUNCT_PIPE,
+	/** = */
+	PUNCT_EQ,
+	/** += */
+	PUNCT_PLUSEQ,
+	/** -= */
+	PUNCT_DASHEQ,
+	/** *= */
+	PUNCT_STAREQ,
+	/** /= */
+	PUNCT_SLASHEQ,
+	/** %= */
+	PUNCT_PERCENTEQ,
+	/** ^= */
+	PUNCT_HATEQ,
+	/** &= */
+	PUNCT_AMPEQ,
+	/** |= */
+	PUNCT_PIPEEQ,
+	/** == */
+	PUNCT_EQ2,
+	/** != */
+	PUNCT_EXCLAMEQ,
+	/** < */
+	PUNCT_LT,
+	/** > */
+	PUNCT_GT,
+	/** <= */
+	PUNCT_LTEQ,
+	/** >= */
+	PUNCT_GTEQ,
+	/** && */
+	PUNCT_AMP2,
+	/** || */
+	PUNCT_PIPE2,
+	/** << */
+	PUNCT_LT2,
+	/** >> */
+	PUNCT_GT2,
+	/** <<= */
+	PUNCT_LT2EQ,
+	/** >>= */
+	PUNCT_GT2EQ,
+	/** ++ */
+	PUNCT_PLUS2,
+	/** -- */
+	PUNCT_DASH2,
+	/** , */
+	PUNCT_COMMA
 };
 
 struct Token {
@@ -154,5 +224,15 @@ void token_stream_push(struct TokenStream *s, struct Token t);
  */
 
 bool lex(struct Str input, struct TokenStream *output);
+
+/**
+ * ast.c
+ */
+
+/**
+ * parse.c
+ */
+
+// bool parse(struct TokenStream input);
 
 #endif

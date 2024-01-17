@@ -31,19 +31,29 @@ static size_t munch_keyword(struct Str input, size_t idx,
 		str_from_cstr("void"),	  str_from_cstr("while")};
 	size_t KEYWORDS_LEN = sizeof(KEYWORDS) / sizeof(*KEYWORDS);
 
+	// Return the token with the longest munch
+	size_t longest = 0;
+	struct Str *best;
+
 	for (size_t i = 0; i < KEYWORDS_LEN; i++) {
 		size_t len = KEYWORDS[i].len;
 		if (idx + len > input.len) {
 			continue;
 		}
 		struct Str slice = str_slice(input, idx, idx + len);
-		if (str_eq(KEYWORDS[i], slice)) {
-			output->type = TOKEN_KW;
-			output->span = string_from_str(slice);
-			return len;
+		if (len > longest && str_eq(KEYWORDS[i], slice)) {
+			longest = len;
+			best = &KEYWORDS[i];
 		}
 	}
-	return 0;
+
+	if (longest == 0) {
+		return 0;
+	} else {
+		output->type = TOKEN_KW;
+		output->span = string_from_str(*best);
+		return longest;
+	}
 }
 
 static size_t munch_ident(struct Str input, size_t idx, struct Token *output) {
@@ -71,36 +81,78 @@ struct PunctPair {
 };
 
 static size_t munch_punct(struct Str input, size_t idx, struct Token *output) {
-	struct PunctPair PUNCTS[] = {{PUNCT_LPAREN, str_from_cstr("(")},
-								 {PUNCT_RPAREN, str_from_cstr(")")},
+	struct PunctPair PUNCTS[] = {{PUNCT_LBRACE, str_from_cstr("{")},
+								 {PUNCT_RBRACE, str_from_cstr("}")},
 								 {PUNCT_LBRACKET, str_from_cstr("[")},
 								 {PUNCT_RBRACKET, str_from_cstr("]")},
-								 {PUNCT_LBRACE, str_from_cstr("{")},
-								 {PUNCT_RBRACE, str_from_cstr("}")},
+								 {PUNCT_LPAREN, str_from_cstr("(")},
+								 {PUNCT_RPAREN, str_from_cstr(")")},
 								 {PUNCT_SEMI, str_from_cstr(";")},
-								 {PUNCT_COMMA, str_from_cstr(",")},
-								 {PUNCT_DOT, str_from_cstr(".")},
 								 {PUNCT_COLON, str_from_cstr(":")},
-								 {PUNCT_STAR, str_from_cstr("*")}};
+								 {PUNCT_QUESTION, str_from_cstr("?")},
+								 {PUNCT_DOT, str_from_cstr(".")},
+								 {PUNCT_ARROW, str_from_cstr("->")},
+								 {PUNCT_TILDE, str_from_cstr("~")},
+								 {PUNCT_EXCLAM, str_from_cstr("!")},
+								 {PUNCT_PLUS, str_from_cstr("+")},
+								 {PUNCT_DASH, str_from_cstr("-")},
+								 {PUNCT_STAR, str_from_cstr("*")},
+								 {PUNCT_SLASH, str_from_cstr("/")},
+								 {PUNCT_PERCENT, str_from_cstr("%")},
+								 {PUNCT_HAT, str_from_cstr("^")},
+								 {PUNCT_AMP, str_from_cstr("&")},
+								 {PUNCT_PIPE, str_from_cstr("|")},
+								 {PUNCT_EQ, str_from_cstr("=")},
+								 {PUNCT_PLUSEQ, str_from_cstr("+=")},
+								 {PUNCT_DASHEQ, str_from_cstr("-=")},
+								 {PUNCT_STAREQ, str_from_cstr("*=")},
+								 {PUNCT_SLASHEQ, str_from_cstr("/=")},
+								 {PUNCT_PERCENTEQ, str_from_cstr("%=")},
+								 {PUNCT_HATEQ, str_from_cstr("^=")},
+								 {PUNCT_AMPEQ, str_from_cstr("&=")},
+								 {PUNCT_PIPEEQ, str_from_cstr("|=")},
+								 {PUNCT_EQ2, str_from_cstr("==")},
+								 {PUNCT_EXCLAMEQ, str_from_cstr("!=")},
+								 {PUNCT_LT, str_from_cstr("<")},
+								 {PUNCT_GT, str_from_cstr(">")},
+								 {PUNCT_LTEQ, str_from_cstr("<=")},
+								 {PUNCT_GTEQ, str_from_cstr(">=")},
+								 {PUNCT_AMP2, str_from_cstr("&&")},
+								 {PUNCT_PIPE2, str_from_cstr("||")},
+								 {PUNCT_LT2, str_from_cstr("<<")},
+								 {PUNCT_GT2, str_from_cstr(">>")},
+								 {PUNCT_LT2EQ, str_from_cstr("<<=")},
+								 {PUNCT_GT2EQ, str_from_cstr(">>=")},
+								 {PUNCT_PLUS2, str_from_cstr("++")},
+								 {PUNCT_DASH2, str_from_cstr("--")},
+								 {PUNCT_COMMA, str_from_cstr(",")}};
 	size_t PUNCTS_LEN = sizeof(PUNCTS) / sizeof(*PUNCTS);
+
+	size_t longest = 0;
+	size_t punct_idx;
 
 	for (size_t i = 0; i < PUNCTS_LEN; i++) {
 		struct PunctPair pair = PUNCTS[i];
-		enum PunctType punct = pair.punct;
 		struct Str str = pair.str;
 		size_t len = str.len;
 		if (idx + len > input.len) {
 			continue;
 		}
 		struct Str slice = str_slice(input, idx, idx + len);
-		if (str_eq(str, slice)) {
-			output->type = TOKEN_PUNCT;
-			output->span = string_from_str(slice);
-			output->meta.punct = punct;
-			return len;
+		if (len > longest && str_eq(str, slice)) {
+			longest = len;
+			punct_idx = i;
 		}
 	}
-	return 0;
+
+	if (longest != 0) {
+		output->type = TOKEN_PUNCT;
+		output->span = string_from_str(PUNCTS[punct_idx].str);
+		output->meta.punct = PUNCTS[punct_idx].punct;
+		return longest;
+	} else {
+		return 0;
+	}
 }
 
 static size_t munch_lit(struct Str input, size_t idx, struct Token *output) {
