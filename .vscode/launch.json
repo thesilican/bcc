@@ -5,27 +5,60 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug C project",
-      "type": "cppdbg",
+      "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/bin/bcc",
-      "args": ["test", "lex", "./test.in"],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "lldb",
-      "preLaunchTask": "Build C project",
-      "logging": {
-        "moduleLoad": false
+      "name": "Debug unit tests in library 'cc'",
+      "cargo": {
+        "args": ["test", "--no-run", "--lib", "--package=cc"],
+        "filter": {
+          "name": "cc",
+          "kind": "lib"
+        }
       },
-      "presentation": {
-        "hidden": false,
-        "group": "",
-        "order": 1
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'test'",
+      "cargo": {
+        "args": ["build", "--bin=test", "--package=cc"],
+        "filter": {
+          "name": "test",
+          "kind": "bin"
+        }
       },
-      "targetArchitecture": "arm",
-      "internalConsoleOptions": "openOnSessionStart"
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'test'",
+      "cargo": {
+        "args": ["test", "--no-run", "--bin=test", "--package=cc"],
+        "filter": {
+          "name": "test",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug integration test 'test'",
+      "cargo": {
+        "args": ["test", "--no-run", "--test=test", "--package=cc"],
+        "filter": {
+          "name": "test",
+          "kind": "test"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
     }
   ]
 }

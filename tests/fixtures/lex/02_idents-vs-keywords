@@ -1,0 +1,12 @@
+break char default double enum
+hi hello_world HiHi __
+==========
+TOKEN KEYWORD break
+TOKEN KEYWORD char
+TOKEN KEYWORD default
+TOKEN KEYWORD double
+TOKEN KEYWORD enum
+TOKEN IDENTIFIER "hi"
+TOKEN IDENTIFIER "hello_world"
+TOKEN IDENTIFIER "HiHi"
+TOKEN IDENTIFIER "__"
