@@ -23,7 +23,7 @@
       "request": "launch",
       "name": "Debug executable 'test'",
       "cargo": {
-        "args": ["build", "--bin=test", "--package=cc"],
+        "args": ["build", "--bin=test", "--package=bcc"],
         "filter": {
           "name": "test",
           "kind": "bin"

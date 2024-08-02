@@ -2,6 +2,7 @@ use crate::{Lit, Token, KW_MAP, PUNCT_MAP};
 use anyhow::{bail, Result};
 use std::str::Chars;
 
+/// An iterator over a stream of characters
 #[derive(Clone)]
 struct Cursor<'a> {
     idx: usize,
@@ -10,23 +11,33 @@ struct Cursor<'a> {
 }
 
 impl<'a> Cursor<'a> {
+    /// Construct a cursor from an input string
     pub fn new(input: &'a str) -> Self {
         let mut chars = input.chars();
         let top = chars.next();
         Cursor { idx: 0, top, chars }
     }
+
+    /// Check whether there are any unconsumed chars remaining
     pub fn is_empty(&self) -> bool {
         self.top == None
     }
+
+    /// Returns the next unconsumed char
     pub fn peek(&self) -> Option<char> {
         self.top
     }
+
+    /// Returns the next unconsumed char and advance the cursor forward
     pub fn next(&mut self) -> Option<char> {
         let output = self.top;
         self.top = self.chars.next();
         self.idx += 1;
         output
     }
+
+    /// Advance the cursor a specified number of characters.
+    /// Will panic if advanced past the end of the stream.
     pub fn advance(&mut self, count: usize) {
         for _ in 0..count {
             if self.next().is_none() {
@@ -34,6 +45,8 @@ impl<'a> Cursor<'a> {
             }
         }
     }
+
+    /// Check if the head of the unconsumed character stream matches a string
     pub fn begins_with(&self, other: &str) -> Option<usize> {
         let mut chars = self.clone();
         let mut expect = other.chars();

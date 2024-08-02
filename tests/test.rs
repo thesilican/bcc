@@ -31,7 +31,7 @@ fn read_suite(fixture: &str) -> Vec<Fixture> {
         }
         let fixture = Fixture {
             name: input_path
-                .file_name()
+                .file_stem()
                 .unwrap()
                 .to_str()
                 .unwrap()
@@ -91,8 +91,7 @@ fn pretty_diff(actual: &str, expected: &str) -> String {
 fn run_all_tests() -> Result<()> {
     let mut failures = 0;
     failures += run_suite("lex", |input, expected| {
-        let result = lex(&input);
-        let tokens = match result {
+        let tokens = match lex(&input) {
             Ok(x) => x,
             Err(err) => {
                 return Err(format!("error: {err}\n"));
@@ -108,6 +107,16 @@ fn run_all_tests() -> Result<()> {
         } else {
             return Err(pretty_diff(&output, &expected));
         }
+    });
+    failures += run_suite("parse", |input, expected| {
+        let tokens = match lex(&input) {
+            Ok(x) => x,
+            Err(err) => {
+                return Err(format!("error: {err}"));
+            }
+        };
+        let mut output = String::new();
+        todo!();
     });
 
     if failures > 0 {
