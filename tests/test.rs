@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use bcc::lex;
+use bcc::{lex, parse, PrettyPrint};
 use colored::Colorize;
 use similar::{ChangeTag, TextDiff};
 use std::{
@@ -45,34 +45,6 @@ fn read_suite(fixture: &str) -> Vec<Fixture> {
     fixtures
 }
 
-fn run_suite<F>(suite: &str, f: F) -> u32
-where
-    F: Fn(&str, &str) -> Result<(), String>,
-{
-    let fixtures = read_suite("lex");
-    let mut failures = 0;
-    for Fixture {
-        name,
-        input,
-        expected,
-    } in fixtures
-    {
-        let success = f(&input, &expected);
-        match success {
-            Ok(()) => {
-                let pass = "PASS".green();
-                println!("[{pass}] {suite}/{name}");
-            }
-            Err(err) => {
-                failures += 1;
-                let fail = "FAIL".red();
-                println!("[{fail}] {suite}/{name}\n{err}");
-            }
-        }
-    }
-    failures
-}
-
 fn pretty_diff(actual: &str, expected: &str) -> String {
     let diff = TextDiff::from_lines(actual, expected);
     let mut output = String::new();
@@ -87,36 +59,66 @@ fn pretty_diff(actual: &str, expected: &str) -> String {
     output
 }
 
+fn run_suite<F>(suite: &str, f: F) -> u32
+where
+    F: Fn(&str) -> Result<String>,
+{
+    let fixtures = read_suite(suite);
+    let mut failures = 0;
+    for fixture in fixtures {
+        let name = fixture.name;
+        let output = f(&fixture.input);
+        match output {
+            Ok(output) if output == fixture.expected => {
+                let pass = "PASS".green();
+                println!("[{pass}] {suite}/{name}");
+            }
+            Ok(output) => {
+                let fail = "FAIL".red();
+                let diff = pretty_diff(&output, &fixture.expected);
+                println!("[{fail}] {suite}/{name}\n{diff}");
+                failures += 1;
+            }
+            Err(err) => {
+                let fail = "FAIL".red();
+                println!("[{fail}] {suite}/{name}\n{err}");
+                failures += 1;
+            }
+        }
+    }
+    failures
+}
+
 #[test]
 fn run_all_tests() -> Result<()> {
     let mut failures = 0;
-    failures += run_suite("lex", |input, expected| {
+    failures += run_suite("lex", |input| {
         let tokens = match lex(&input) {
             Ok(x) => x,
             Err(err) => {
-                return Err(format!("error: {err}\n"));
+                return Ok(err.to_string());
             }
         };
         let mut output = String::new();
         for token in tokens {
-            writeln!(output, "{token}").unwrap();
+            writeln!(output, "{}", token.pretty_print()).unwrap();
         }
-
-        if output == expected {
-            Ok(())
-        } else {
-            return Err(pretty_diff(&output, &expected));
-        }
+        Ok(output)
     });
-    failures += run_suite("parse", |input, expected| {
+    failures += run_suite("parse", |input| {
         let tokens = match lex(&input) {
             Ok(x) => x,
             Err(err) => {
-                return Err(format!("error: {err}"));
+                return Err(err.context("lex error"));
             }
         };
-        let mut output = String::new();
-        todo!();
+        let ast = match parse(tokens) {
+            Ok(x) => x,
+            Err(err) => {
+                return Ok(err.to_string());
+            }
+        };
+        Ok(ast.pretty_print())
     });
 
     if failures > 0 {

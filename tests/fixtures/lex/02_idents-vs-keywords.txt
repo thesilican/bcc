@@ -1,12 +1,12 @@
 break char default double enum
 hi hello_world HiHi __
 ==========
-TOKEN KEYWORD break
-TOKEN KEYWORD char
-TOKEN KEYWORD default
-TOKEN KEYWORD double
-TOKEN KEYWORD enum
-TOKEN IDENTIFIER "hi"
-TOKEN IDENTIFIER "hello_world"
-TOKEN IDENTIFIER "HiHi"
-TOKEN IDENTIFIER "__"
+Token Kw break
+Token Kw char
+Token Kw default
+Token Kw double
+Token Kw enum
+Token Ident "hi"
+Token Ident "hello_world"
+Token Ident "HiHi"
+Token Ident "__"

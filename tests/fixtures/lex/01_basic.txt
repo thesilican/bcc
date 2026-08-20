@@ -2,20 +2,20 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 ==========
-TOKEN KEYWORD int
-TOKEN IDENTIFIER "main"
-TOKEN PUNCTUATION (
-TOKEN KEYWORD int
-TOKEN IDENTIFIER "argc"
-TOKEN PUNCTUATION ,
-TOKEN KEYWORD char
-TOKEN PUNCTUATION *
-TOKEN IDENTIFIER "argv"
-TOKEN PUNCTUATION [
-TOKEN PUNCTUATION ]
-TOKEN PUNCTUATION )
-TOKEN PUNCTUATION {
-TOKEN KEYWORD return
-TOKEN LITERAL INTEGER 0
-TOKEN PUNCTUATION ;
-TOKEN PUNCTUATION }
+Token Kw int
+Token Ident "main"
+Token Punct (
+Token Kw int
+Token Ident "argc"
+Token Punct ,
+Token Kw char
+Token Punct *
+Token Ident "argv"
+Token Punct [
+Token Punct ]
+Token Punct )
+Token Punct {
+Token Kw return
+Token Lit Int 0
+Token Punct ;
+Token Punct }

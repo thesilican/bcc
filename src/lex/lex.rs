@@ -1,4 +1,4 @@
-use crate::{Lit, Token, KW_MAP, PUNCT_MAP};
+use crate::{Kw, Lit, Punct, Token};
 use anyhow::{bail, Result};
 use std::str::Chars;
 
@@ -53,11 +53,10 @@ impl<'a> Cursor<'a> {
         let mut count = 0;
         loop {
             match (chars.next(), expect.next()) {
-                (None, None) => break,
-                (Some(_), None) => break,
+                (_, None) => break,
                 (None, Some(_)) => return None,
-                (Some(a), Some(b)) if a != b => return None,
-                (Some(_), Some(_)) => {}
+                (Some(a), Some(b)) if a == b => {}
+                (Some(_), Some(_)) => return None,
             }
             count += 1;
         }
@@ -87,10 +86,10 @@ fn munch_whitespace<'a>(cursor: &mut Cursor<'a>) -> Option<()> {
 fn munch_keyword<'a>(cursor: &mut Cursor<'a>) -> Option<Token> {
     let mut best_keyword = None;
     let mut best_len = 0;
-    for &(keyword, text) in KW_MAP {
-        match cursor.begins_with(text) {
+    for &kw in Kw::ALL {
+        match cursor.begins_with(kw.to_str()) {
             Some(len) if len > best_len => {
-                best_keyword = Some(keyword);
+                best_keyword = Some(kw);
                 best_len = len;
             }
             _ => {}
@@ -109,8 +108,8 @@ fn munch_keyword<'a>(cursor: &mut Cursor<'a>) -> Option<Token> {
 fn munch_punctuation<'a>(cursor: &mut Cursor<'a>) -> Option<Token> {
     let mut best_punct = None;
     let mut best_len = 0;
-    for &(punct, text) in PUNCT_MAP {
-        match cursor.begins_with(text) {
+    for &punct in Punct::ALL {
+        match cursor.begins_with(punct.to_str()) {
             Some(len) if len > best_len => {
                 best_punct = Some(punct);
                 best_len = len;

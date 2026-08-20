@@ -1,4 +1,135 @@
-# Grammar for C AST
+# C Syntax
+# Source: https://learn.microsoft.com/en-us/cpp/c-language/c-language-syntax-summary
+
+## Lexical Grammar (Tokens)
+token
+	= kw
+	| ident
+	| lit
+	| punct
+
+kw
+	= "auto" | "break" | "case" | "char" | "const" | "continue" | "default"
+	| "do" | "double" | "else" | "enum" | "extern" | "float" | "for" | "goto"
+	| "if" | "inline" | "int" | "long" | "register" | "restrict" | "return"
+	| "short" | "signed" | "sizeof" | "static" | "struct" | "switch" | "typedef"
+	| "union" | "unsigned" | "void" | "volatile" | "while"
+
+ident
+	= ident-nondigit ( ident-char )*
+
+ident-char
+	= ident-nondigit | digit
+
+ident-nondigit
+	= "_" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
+	| "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+	| "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
+	| "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
+
+lit
+	= lit-int
+	| lit-float
+	| lit-char
+	| lit-str
+
+lit-int
+	= dec-const ( int-suffix )?
+	| bin-const ( int-suffix )?
+	| oct-const ( int-suffix )?
+	| hex-const ( int-suffix )?
+
+dec-const
+	= nonzero-digit ( digit )*
+
+bin-const
+	= bin-prefix ( bin-digit )+
+
+bin-prefix
+	= "0b" | "0B"
+
+bin-digit
+	= "0" | "1"
+
+oct-const
+	= "0" ( oct-digit )*
+
+hex-const
+	= hex-prefix ( hex-digit )+
+
+hex-prefix
+	= "0x" | "0X"
+
+digit
+	= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+nonzero-digit
+	= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+oct-digit
+	= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7"
+
+hex-digit
+	= "0" | "1" | "2" |  "3" | "4" | "5" | "6" | "7" | "8" | "9"
+	| "a" | "b" | "c" |  "d" | "e" | "f"
+	| "A" | "B" | "C" |  "D" | "E" | "F"
+
+int-suffix
+	= unsigned-suffix ( long-suffix )?
+	| unsigned-suffix ( long-long-suffix )?
+	| long-suffix ( unsigned-suffix )?
+	| long-long-suffix ( unsigned-suffix )?
+
+unsigned-suffix
+	= "u" | "U"
+
+long-suffix
+	= "l" | "L"
+
+long-long-suffix
+	= "ll" | "LL"
+
+lit-float
+	= dec-float-const
+	| hex-float-const
+
+dec-float-const
+	= fractional-const ( exp-part )? ( float-suffix )?
+	| digit-sequence exp-part ( float-suffix )?
+
+hex-float-const
+	= hex-prefix hex-fractional-const ( bin-exp-part )? ( float-suffix )?
+	| hex-prefix hex-digit-sequence bin-exp-part ( float-suffix )?
+
+fractional-const
+	= ( digit-sequence )? "." digit-sequence
+	| digit-sequence "."
+
+exp-part
+	= "e" ( sign )? digit-sequence
+	| "E" ( sign )? digit-sequence
+
+sign
+	= "+" | "-"
+
+digit-sequence
+	= ( digit )+
+
+hex-fractional-const
+	= ( hex-digit-sequence )? "." hex-digit-sequence
+	| hex-digit-sequence "."
+
+bin-exp-part
+	= "p" ( sign )? digit-sequence
+	| "P" ( sign )? digit-sequence
+
+hex-digit-sequence
+	= ( hex-digit )+
+
+float-suffix
+	= "f" | "l" | "F" | "L"
+
+## Phrase Structure Grammar (AST)
 program
 	= ( item )*;
 
@@ -55,10 +186,3 @@ type-prefix
 	= "int"
 	| "char"
 	| "struct" ident;
-
-# Tokens
-ident
-	= "";
-
-lit
-	= "";

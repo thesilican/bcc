@@ -5,13 +5,13 @@
 999
 1"2"3
 ==========
-TOKEN LITERAL STRING "hello"
-TOKEN LITERAL STRING "world"
-TOKEN LITERAL STRING ""
-TOKEN LITERAL STRING ""
-TOKEN LITERAL STRING "!!!"
-TOKEN LITERAL INTEGER 1234567890
-TOKEN LITERAL INTEGER 999
-TOKEN LITERAL INTEGER 1
-TOKEN LITERAL STRING "2"
-TOKEN LITERAL INTEGER 3
+Token Lit Str "hello"
+Token Lit Str "world"
+Token Lit Str ""
+Token Lit Str ""
+Token Lit Str "!!!"
+Token Lit Int 1234567890
+Token Lit Int 999
+Token Lit Int 1
+Token Lit Str "2"
+Token Lit Int 3

@@ -219,7 +219,7 @@ fn munch_fn_defn(cursor: &mut TokenCursor<'_>) -> Result<FnDefn> {
         name,
         ret,
         params,
-        body,
+        stmts: body,
     })
 }
 
@@ -303,7 +303,7 @@ mod tests {
                     name: String::from("main"),
                     ret: Ty::Basic(BasicTy::Int),
                     params: Vec::new(),
-                    body: Vec::new(),
+                    stmts: Vec::new(),
                 }),
             ),
             (
@@ -321,7 +321,7 @@ mod tests {
                             ty: Ty::Basic(BasicTy::Char),
                         },
                     ],
-                    body: Vec::new(),
+                    stmts: Vec::new(),
                 }),
             ),
             (
@@ -341,7 +341,7 @@ mod tests {
                             })),
                         }),
                     }],
-                    body: Vec::new(),
+                    stmts: Vec::new(),
                 }),
             ),
             ("int main ()", None),
